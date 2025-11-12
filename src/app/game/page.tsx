@@ -78,7 +78,7 @@ function Game() {
   const handleNextRound = () => {
     const nextRound = round + 1;
     if (nextRound >= shuffledPhrases.length) {
-      handleRestart();
+      // Game over logic is handled in RoundEndScreen, which will navigate
       return;
     }
     
@@ -126,6 +126,7 @@ function Game() {
       case 'role-assignment':
         return (
           <RoleAssignmentScreen
+            key={currentPlayerIndex}
             player={currentPlayer}
             secretPhrase={secretPhrase}
             onContinue={handleRolesAssigned}
