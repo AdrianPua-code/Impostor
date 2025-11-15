@@ -1,11 +1,26 @@
+
 "use client";
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense, useState, useEffect } from 'react';
 import { RoleAssignmentScreen } from '@/components/game/solo/RoleAssignmentScreen';
 import { RoundEndScreen } from '@/components/game/solo/RoundEndScreen';
 import { Header } from '@/components/Header';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 
 export type Player = {
   id: number;
@@ -40,6 +55,7 @@ function createPlayers(playerCount: number): Player[] {
 
 function Game() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [allPhrases, setAllPhrases] = useState<string[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [secretPhrase, setSecretPhrase] = useState('');
@@ -126,7 +142,7 @@ function Game() {
       case 'role-assignment':
         return (
           <RoleAssignmentScreen
-            key={currentPlayerIndex}
+            key={currentPlayer.id}
             player={currentPlayer}
             secretPhrase={secretPhrase}
             onContinue={handleRolesAssigned}
@@ -134,14 +150,35 @@ function Game() {
           />
         );
       case 'round-end':
-        return <RoundEndScreen onNextRound={handleNextRound} onRestart={handleRestart} isGameOver={round >= shuffledPhrases.length - 1} />;
+        return <RoundEndScreen players={players} onNextRound={handleNextRound} onRestart={handleRestart} isGameOver={round >= shuffledPhrases.length - 1} />;
       default:
         return <div>Cargando...</div>;
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background relative">
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="ghost" size="icon" className="absolute top-4 right-4 h-8 w-8">
+            <Home className="h-5 w-5" />
+            <span className="sr-only">Abandonar Partida</span>
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Desean abandonar la partida?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Si abandonan, perderán todo el progreso. Tendrán que empezar de nuevo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={() => router.push('/')}>Aceptar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Header />
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="w-full max-w-md">

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { Progress } from '@/components/ui/progress';
 
@@ -17,6 +17,7 @@ export function PhrasesForm() {
   const [phrases, setPhrases] = useState<string[]>([]);
   const [currentPhrase, setCurrentPhrase] = useState('');
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+  const [isPhraseVisible, setIsPhraseVisible] = useState(false);
 
   useEffect(() => {
     const players = parseInt(searchParams.get('players') || '0', 10);
@@ -29,6 +30,7 @@ export function PhrasesForm() {
     const newPhrases = [...phrases, currentPhrase];
     setPhrases(newPhrases);
     setCurrentPhrase('');
+    setIsPhraseVisible(false); // Hide phrase for next player
 
     if (currentPlayerIndex < playerCount - 1) {
       setCurrentPlayerIndex(currentPlayerIndex + 1);
@@ -59,15 +61,32 @@ export function PhrasesForm() {
         <CardContent className="space-y-6 p-4 sm:p-6 pt-4">
           <div className="space-y-2">
             <Label htmlFor="phrase-input">Palabra Secreta</Label>
-            <Input
-              id="phrase-input"
-              type="password"
-              placeholder="Escribe una palabra..."
-              value={currentPhrase}
-              onChange={(e) => setCurrentPhrase(e.target.value)}
-              onFocus={(e) => e.target.type = 'text'}
-              onBlur={(e) => e.target.type = 'password'}
-            />
+            <div className="relative">
+              <Input
+                id="phrase-input"
+                type={isPhraseVisible ? 'text' : 'password'}
+                placeholder="Escribe una palabra..."
+                value={currentPhrase}
+                onChange={(e) => setCurrentPhrase(e.target.value)}
+                className="pr-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setIsPhraseVisible(!isPhraseVisible)}
+              >
+                {isPhraseVisible ? (
+                  <EyeOff className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Eye className="h-4 w-4" aria-hidden="true" />
+                )}
+                <span className="sr-only">
+                  {isPhraseVisible ? 'Ocultar palabra' : 'Mostrar palabra'}
+                </span>
+              </Button>
+            </div>
           </div>
           <div>
             <Progress value={((currentPlayerIndex + 1) / playerCount) * 100} className="w-full" />
