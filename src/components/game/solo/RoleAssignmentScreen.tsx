@@ -45,7 +45,7 @@ export function RoleAssignmentScreen({
             <UserCheck className="h-12 w-12 sm:h-16 sm:w-16 text-primary" />
           )}
         </div>
-        <CardTitle className="font-headline text-2xl sm:text-3xl">{isImpostor ? '¡Eres el Impostor!' : `Eres el Agente ${agentNumber}`}</CardTitle>
+        <CardTitle className="font-headline text-2xl sm:text-3xl">{isImpostor ? '¡Eres el Impostor!' : `Eres el Jugador ${player.id}`}</CardTitle>
         <CardDescription>{isImpostor ? 'Tu misión es engañar a todos.' : 'Descubre al impostor.'}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -56,6 +56,11 @@ export function RoleAssignmentScreen({
           <p className="text-xl sm:text-2xl font-bold text-foreground font-headline break-words">
             {isImpostor ? '???' : `"${secretPhrase}"`}
           </p>
+          {isImpostor && (
+            <p className="text-md sm:text-lg font-semibold text-destructive mt-2">
+              Finge ser el Jugador {agentNumber}
+            </p>
+          )}
         </div>
         <Button onClick={onContinue} size="lg" className="w-full text-base sm:text-lg py-5 sm:py-6">
           {isLastPlayer ? 'Finalizar Ronda' : 'Entendido, pasar al siguiente'}

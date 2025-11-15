@@ -38,16 +38,14 @@ function createPlayers(playerCount: number): Player[] {
   let agentCounter = 0;
 
   for (let i = 0; i < playerCount; i++) {
+    agentCounter++;
     const isImpostor = i === impostorIndex;
-    if (!isImpostor) {
-      agentCounter++;
-    }
     players.push({
       id: i + 1,
       name: `Jugador ${i + 1}`,
       avatar: PlaceHolderImages.find(img => img.id === `avatar${i + 1}`)?.imageUrl || '',
       isImpostor: isImpostor,
-      agentNumber: isImpostor ? 0 : agentCounter,
+      agentNumber: agentCounter,
     });
   }
   return players;
@@ -102,14 +100,12 @@ function Game() {
     let agentCounter = 0;
     const newImpostorIndex = Math.floor(Math.random() * playerCount);
     const updatedPlayers = players.map((p, i) => {
+        agentCounter++;
         const isImpostor = i === newImpostorIndex;
-        if (!isImpostor) {
-          agentCounter++;
-        }
         return {
           ...p,
           isImpostor: isImpostor,
-          agentNumber: isImpostor ? 0 : agentCounter,
+          agentNumber: agentCounter,
         };
       });
     
